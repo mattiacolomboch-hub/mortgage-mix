@@ -1,0 +1,47 @@
+== V1 Optimiser: hand formula vs fine grid (SARON + 10y only) ==
+lambda 1e-05: formula w* = 0.447   grid (0.1% steps) = 0.447
+lambda 2e-05: formula w* = 0.223   grid (0.1% steps) = 0.223
+lambda 5e-05: formula w* = 0.089   grid (0.1% steps) = 0.089
+
+== V2 Lagrange closed form (shorting allowed) vs constrained optimum, lambda 2e-5 ==
+closed form: [ 6.09 -5.12 -1.    1.03] (negative weights -> need w >= 0)
+constrained: 20% SARON / 80% 10y
+
+== V3 Monte Carlo precision ==
+recommended 20% SARON / 80% 10y: mean 173,338, SE of mean = sd/sqrt(N) = 8,106/sqrt(10000) = 81 CHF
+SE of P(trouble) for p = 0.006: sqrt(p(1-p)/N) = 0.0008
+seed 1: 25% SARON / 75% 10y (mean 172,526)
+seed 2: 20% SARON / 80% 10y (mean 173,448)
+seed 3: 20% SARON / 80% 10y (mean 173,354)
+seed 4: 25% SARON / 75% 10y (mean 172,502)
+seed 5: 25% SARON / 75% 10y (mean 172,512)
+
+== V4 Second rate model: same question with monthly AR(1) (normal and bootstrap) ==
+policy move-or-hold        100% SARON mean  161,599 p95  235,307 | best mix: 20% SARON / 80% 10y
+AR(1) normal               100% SARON mean  126,273 p95  177,626 | best mix: 100% SARON
+AR(1) residual bootstrap   100% SARON mean  125,356 p95  174,500 | best mix: 100% SARON
+policy, theta = AR(1) 0.11% best mix: 100% SARON
+
+== V5 Benchmark: UBS CIO table (CHF 1M, 10y), with UBS-like rates 10y 1.71%, SARON margin 0.75% ==
+10y fixed: ours 171k vs UBS 171k
+SARON: ours p5 / median / mean / p95 = 87 / 150 / 157 / 249k  vs UBS low / base / high = 98 / 167 / 257k
+share of our paths below UBS low (98k): 11.6%, above UBS high (257k): 3.9%
+
+== V6 Backtest on history: realised 10y cost of CHF 800k, starts 2007-12 to 2016-09 ==
+106 start months. SARON cheaper in 100% of them. Average saving 125,172 CHF
+  start 2007-12: SARON    99,506  10y fixed   344,000  50/50   221,753
+  start 2009-12: SARON    85,986  10y fixed   274,400  50/50   180,193
+  start 2011-12: SARON    84,994  10y fixed   191,200  50/50   138,097
+  start 2013-12: SARON    97,346  10y fixed   226,400  50/50   161,873
+  start 2015-12: SARON   109,182  10y fixed   153,600  50/50   131,391
+
+== V7 Extreme and invalid inputs ==
+own funds 10%    -> app stops with: own funds < 20%, bank rule fails (39% > 33%)
+income 120k      -> app stops with: bank rule fails (49% > 33%)
+own funds 100%   -> app stops with: no loan needed
+income 0         -> app stops with: income must be positive
+long-run level 3%      -> 100% 10y               mean 176,272 p95 176,272 P(trouble) 0.0%
+long-run level -0.75%  -> 100% SARON             mean 112,688 p95 151,276 P(trouble) 0.0%
+start at 1.75% (2023)  -> 80% 2y / 20% 10y       mean 130,925 p95 189,805 P(trouble) 0.0%
+income 150k (budget 31,111/yr): P(trouble) 100% SARON 13.0% | cheapest mix allowed (lambda 0): 75% SARON / 25% 10y
+income 140k (budget 27,778/yr): P(trouble) 100% SARON 23.1% | cheapest mix allowed (lambda 0): 55% SARON / 45% 10y
